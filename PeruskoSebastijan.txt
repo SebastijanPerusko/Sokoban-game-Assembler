@@ -1,0 +1,306 @@
+; ------------------------------------------------------------------------------
+; Naslov: Sokoban
+; Avtor:  Sebastijan Peruško
+; Datum:  Maj 2020
+;
+; Pred zagonom igre
+;   - Nastavite hitrost procesorja na 64 kHz
+;
+; Opis:
+;   Z belim pikslom, na katerem bomo imeli možnost premikanja, 
+;   morate vse zaboje (rumene piksele) postaviti na rdeči del.
+;   Ko namestite vse zaboje na rdeči del nadaljujemo na nasledni stopnju.
+;	Ko končamo zadnji stopnjo se bo pojavila beseda WIN 
+;
+;   Igra se igra z naslednjimi tipkami:
+;     8 - GOR
+;     6 - DESNO
+;     4 - LEVO
+;     5 - DOL
+;
+;
+; ------------------------------------------------------------------------------
+; Izvedba se začne tukaj.
+; Takoj skoči na "zagonsko" rutino za nastavitvijo sistema.
+
+JMP main
+
+; Prekinitveni vektor
+; To navodilo JMP prebiva na naslovu 0x0003, kjer procesor
+; pričakuje prekinitev servisne rutine. 
+
+JMP isr
+;--------------------------------
+; Sistemske prekinitve
+; Tukaj shranimo trenutno število stopnji in stopnje
+
+n: DW 0
+;--------------------------------
+; Prva stopnja
+
+image: 
+	DB "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x92\x92\x92\x92\x92\x92\x92\x92\x92\x92\x92\x92\x00\x00\x00\x00\x92\xE1\xE1\x0E\x0E\x92\x0E\x0E\x0E\x0E\x0E\x92\x92\x92\x00\x00\x92\xE1\xE1\x0E\x0E\x92\x0E\xB4\x0E\x0E\xB4\x0E\x0E\x92\x00\x00\x92\xE1\xE1\x0E\x0E\x92\xB4\x92\x92\x92\x92\x0E\x0E\x92\x00\x00\x92\xE1\xE1\x0E\x0E\x0E\x0E\x0E\x0E\x92\x92\x0E\x0E\x92\x00\x00\x92\xE1\xE1\x0E\x0E\x92\x0E\x92\x0E\x0E\xB4\x0E\x92\x92\x00\x00\x92\x92\x92\x92\x92\x92\x0E\x92\x92\xB4\x0E\xB4\x0E\x92\x00\x00\x00\x00\x92\x0E\xB4\x0E\x0E\xB4\x0E\xB4\x0E\xB4\x0E\x92\x00\x00\x00\x00\x92\x0E\x0E\x0E\x0E\x92\x0E\x0E\x0E\x0E\x0E\x92\x00\x00\x00\x00\x92\x92\x92\x92\x92\x92\x92\x92\x92\x92\x92\x92\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+;--------------------------------
+; Druga stopnja
+
+imagedva: 
+	DB "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x92\x92\x92\x92\x92\x92\x0E\x0E\x92\x92\x92\x0E\x00\x00\x00\x00\x92\xE1\xE1\x0E\x0E\x92\x0E\x92\x92\x0E\x92\x92\x00\x00\x00\x00\x92\xE1\xE1\x0E\x0E\x92\x92\x92\x0E\x0E\x0E\x92\x00\x00\x00\x00\x92\xE1\xE1\x0E\x0E\x0E\x0E\x0E\xB4\xB4\x0E\x92\x00\x00\x00\x00\x92\xE1\xE1\x0E\x0E\x92\x0E\x92\x0E\xB4\x0E\x92\x00\x00\x00\x00\x92\xE1\xE1\x92\x92\x92\x0E\x92\x0E\xB4\x0E\x92\x00\x00\x00\x00\x92\x92\x92\x92\x0E\xB4\x0E\x92\xB4\x0E\x0E\x92\x00\x00\x00\x00\x0E\x0E\x0E\x92\x0E\x0E\xB4\x92\x0E\xB4\x0E\x92\x00\x00\x00\x00\x0E\x0E\x0E\x92\x0E\xB4\x0E\x0E\xB4\x0E\x0E\x92\x00\x00\x00\x00\x0E\x0E\x0E\x92\x0E\x0E\x92\x92\x0E\x0E\x0E\x92\x00\x00\x00\x00\x0E\x0E\x0E\x92\x92\x92\x92\x92\x92\x92\x92\x92\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+ 
+;-------------------------------- 
+; Zaslon, ki se prikaže, ko zaključimo vse stopnje
+
+imagewin:
+	DB "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\x00\x00\x00\x00\x00\xFF\x00\xFF\x00\xFF\x00\x00\xFF\x00\x00\x00\xFF\x00\xFF\x00\xFF\x00\x00\xFF\x00\xFF\xFF\x00\xFF\x00\x00\x00\xFF\x00\xFF\x00\xFF\x00\x00\xFF\x00\xFF\x00\xFF\xFF\x00\x00\x00\xFF\xFF\x00\xFF\xFF\x00\x00\xFF\x00\xFF\x00\x00\xFF\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+   
+;--------------------------------
+
+
+isr:						; Na naslovu 0x0003
+	PUSH A					; ISR uporablja A, zato ga shranimo
+    IN 6					; Preberemo pritisnjeno tipko.
+    MOVB [0x00EE0], AL		; In njeno ASCII kodo izpišemo v prvo txt celico
+   	CMPB AL, 0x38			; Preverimo kateri gump je bil prtisnjen 
+    JNE continue			; Gor
+    CALL move_up
+    continue:
+    CMP A, 0x36				; Desno
+    JNE continuedva
+    CALL move_right
+    continuedva: 
+    CMP A, 0x35				; Dol
+    JNE continuetri
+    CALL move_down
+    continuetri: 
+    CMP A, 0x34				; Levo
+    JNE continuestiri
+    CALL move_left
+    continuestiri: 
+    MOV A, 1				; Poservisirali smo prekinitev št. 1 (tipkovnica).
+    OUT 2					; In to povemo EOI registru.
+    POP A					; Restavriramo originalno vredost A.
+    IRET					; Vrnemo se iz ISR-ja.
+
+
+main:
+	MOV SP, 0x0EDF			; Inicializiramo sklad.
+    MOV A, image			; V register A nalozimo lokacijo kjer se začne slika
+    CALL draw_image 		; in ga narišemo na zaslon.
+    MOV C, 0x0F55			; Postavimo igralca na zaslon.
+    MOVB [C], 255
+    MOV A, 1				; Prekinitve tipkovnice.
+    OUT 0					; Omogočimo.
+    STI 					; Omogočimo prekninitve globalno.
+    HLT
+    
+move_up:					; Funkcija za premikanje igralca gor.
+	MOV D, C				; Register C vsebuje pozicijo igralca, 
+    SUB D, 16				; ga nalozimo v register D tako da preverimo kaj
+    MOVB BL, [D]			; se nahaja nad igralcem.
+    CMPB BL, 146			; Prevermo če nad igralcem je zid, če je se ne premikamo
+    JE move_up_return		
+    CMPB BL, 180			; Prevermi če nad igralcem je zaboj
+    JNE move_up_only		; - če ni se samo premikamo naprej
+    MOV B, D				; - če je potem moramo preveriti kaj se nahaja
+    SUB B, 16				; nad zabojem
+    MOVB BL, [B]
+    CMPB BL, 146			; Če nad zabojem je zid -> ne se premikamo
+    JE move_up_return
+    CMPB BL, 180			; Če nad zabojem je še en zaboj -> se ne premikamo
+    JE move_up_return
+    MOVB [D], 0x0E			; Če ni nad zabojem zid ali drug zaboj potem premaknemo
+	SUB D, 16				; zaboj eno pozicijo gor
+    MOVB [D], 180
+move_up_only:				; V tem delu premaknemo, igralca
+	MOVB [C], 0x0E			; V prejšnjem položaju naložimo barvo ozadja,
+	SUB C, 16				; in v naslednje barvo igralca.
+    MOVB [C], 255
+    CALL color_position		; Na koncu pokličemo funkcijo color_position tako, da
+move_up_return:				; preveri kolok zaboji je na rdečem polju.
+	RET
+    
+move_right:					; Funkcija za premikanje igralca desno.
+	MOV D, C				; Register C vsebuje pozicijo igralca, 
+    INC D					; ga nalozimo v register D tako da preverimo kaj
+    MOVB BL, [D]			; se nahaja na desni strani igralca.
+    CMPB BL, 146			; Prevermo če na desni strani igralca je zid, če je se ne premikamo
+    JE move_right_return
+    CMPB BL, 180			; Prevermi če na desni strani igralca je zaboj
+    JNE move_right_only		; - če ni se samo premikamo
+    MOV B, D				; - če je potem moramo preveriti kaj se nahaja
+    INC B					; na desni strani zaboja.
+    MOVB BL, [B]
+    CMPB BL, 146			; Če na desni strani igralca je zid -> ne se premikamo
+    JE move_right_return
+    CMPB BL, 180			; Če na desni strani igralca je še en zaboj -> se ne premikamo
+    JE move_right_return
+    MOVB [D], 0x0E			; Če ni na desni strani zaboja zid ali drug zaboj potem premaknemo
+	INC D					; zaboj eno pozicijo desno
+    MOVB [D], 180
+move_right_only:			; V tem delu premaknemo, igralca
+	MOVB [C], 0x0E			; V prejšnjem položaju naložimo barvo ozadja,
+	INC C					; in v naslednje barvo igralca.
+    MOVB [C], 255
+    CALL color_position		; Na koncu pokličemo funkcijo color_position tako, da
+move_right_return:			; preveri kolok zaboji je na rdečem polju.
+	RET
+    
+move_down:					; Funkcija za premikanje igralca spodaj.
+	MOV D, C				; Register C vsebuje pozicijo igralca, 
+    ADD D, 16				; ga nalozimo v register D tako da preverimo kaj
+    MOVB BL, [D]			; se nahaja spodaj igralca.
+    CMPB BL, 146			; Prevermo čespodaj igralca je zid, če je se ne premikamo
+    JE move_down_return
+    CMPB BL, 180			; Prevermi če spodaj igralca je zaboj
+    JNE move_down_only		; - če ni se samo premikamo
+    MOV B, D				; - če je potem moramo preveriti kaj se nahaja
+    ADD B, 16				; na spodaj zaboja.
+    MOVB BL, [B]
+    CMPB BL, 146			; Če spodaj zaboja je zid -> ne se premikamo
+    JE move_down_return
+    CMPB BL, 180			; Če spodaj zaboja je še en zaboj -> se ne premikamo
+    JE move_down_return
+    MOVB [D], 0x0E			; Če ni spodaj zaboja zid ali drug zaboj potem premaknemo
+	ADD D, 16				; zaboj eno pozicijo dol
+    MOVB [D], 180
+move_down_only:				; V tem delu premaknemo, igralca
+	MOVB [C], 0x0E			; V prejšnjem položaju naložimo barvo ozadja,
+	ADD C, 16				; in v naslednje barvo igralca.
+    MOVB [C], 255
+    CALL color_position		; Na koncu pokličemo funkcijo color_position tako, da
+move_down_return:			; preveri kolok zaboji je na rdečem polju.
+	RET
+    
+move_left:					; Funkcija za premikanje igralca levo.
+	MOV D, C				; Register C vsebuje pozicijo igralca,
+    DEC D					; ga nalozimo v register D tako da preverimo kaj
+    MOVB BL, [D]			; se nahaja na levi strani igralca.
+    CMPB BL, 146			; Prevermo če na levi strani igralca je zid, če je se ne premikamo
+    JE move_left_return
+    CMPB BL, 180			; Prevermi če na levi strani igralca je zaboj
+    JNE move_left_only		; - če ni se samo premikamo
+    MOV B, D				; - če je potem moramo preveriti kaj se nahaja
+    DEC B					; na levi strani zaboja.
+    MOVB BL, [B]
+    CMPB BL, 146			; Če na levi strani zaboja je zid -> ne se premikamo
+    JE move_right_return
+    CMPB BL, 180			; Če na levi strani zaboja je še en zaboj -> se ne premikamo
+    JE move_right_return
+    MOVB [D], 0x0E			; Če ni na levi strani zaboja zid ali drug zaboj potem premaknemo
+	DEC D					; zaboj eno pozicijo levo
+    MOVB [D], 180
+move_left_only:				; V tem delu premaknemo, igralca
+	MOVB [C], 0x0E			; V prejšnjem položaju naložimo barvo ozadja,
+	DEC C					; in v naslednje barvo igralca.
+    MOVB [C], 255
+    CALL color_position		; Na koncu pokličemo funkcijo color_position tako, da
+move_left_return:			; preveri kolok zaboji je na rdečem polju.
+	RET
+    
+   
+draw_image:					; Funkcija risanje stopnja na zaslon.
+	MOV B, display_begin	; V register A naložimo lokacijo kjer se začne zaslon
+draw_image_loop:
+	CMP B, display_end		; Ko presežemo zandjega piksela zaslona potem
+    JA draw_image_return	; končamo izvajanje
+    MOVB DL, [A]			; Ker register A hrani pozicijo slike potem 
+    MOVB [B], DL			; kopiramo v celico spomina to kaj se nahaja v A-ju
+    INC A					; Nadaljujemo na nasledno lokacijo slike
+    INC B					; Nadaljujemo na nasledno lokacijo zaslona
+    JMP draw_image_loop
+draw_image_return:
+	RET
+    
+    
+    
+;--------------------------------
+; Funkcija color_position ima naslednje naloge: 
+; 	- Preveri koliko zabojev je na rdečem poju
+; 		- Če so 10 potem ali nadaljujemo na naslednjo stopnjo ali če smo kočali vse 
+; 		  pokliče funkcijo za narisati sliko WIN
+;	- Ker funkcije mov_x naložijo na prejšnje celico barvo 0x0E, če se nahajamo na
+;	  rdeče polje funkcija color_position pobarva vse v rdečo bravo.
+;--------------------------------
+
+color_position:
+	PUSH A					; Shranimo v sklad vsebino registrov
+    PUSH B
+    PUSH C
+    PUSH D
+	MOV B, 0x0F42			; V register B shranimo začetno pozicijo rdečega polja(levi)
+    MOV D, 0				; V registeru D bomo shranili stevilo zabojev,
+color_p1:					; ki se nahajajo na rdečem polju
+    CMP B, 0x0F82			; Ko presežemo konec prvega dela rdečega polja
+    JA color_p2				; Končamo izvajanje
+    MOVB CL, [B]
+    CMPB CL, 0xB4			; V vsakoj celici polja preverimo če je zaboj
+    JE color_p1_r
+    CMPB CL, 0xFF			; V vsakoj celici polja preverimo če je igralec
+    JE color_p1_r
+    MOVB [B], 0xE1 			; Če v celici ni zaboja ali igralca potem
+color_p1_r:					; pobarvamo celico v rdečo barvo
+	CMPB CL, 0xB4			; Če tista celica vsebuje zaboj potem 
+    JNE color_p1_r_r
+    INC D					; povečamo register D
+color_p1_r_r:
+	ADD B, 16				; Nadaljujemo na nasledno celico rdečega polja
+    JMP color_p1
+color_p2:
+	MOV B, 0x0F43			; Nadaljujemo na naslednji del polja(Desni)
+color_p2_loop:
+    CMP B, 0x0F83			; Ko presežemo konec prvega dela rdečega polja
+    JA color_position_end	; Končamo izvajanje
+    MOVB CL, [B]
+    CMPB CL, 0xB4			; V vsakoj celici polja preverimo če je zaboj
+    JE color_p2_r
+    CMPB CL, 0xFF			; V vsakoj celici polja preverimo če je igralec
+    JE color_p2_r
+    MOVB [B], 0xE1 			; Če v celici ni zaboja ali igralca potem
+color_p2_r:					; pobarvamo celico v rdečo barvo
+	CMPB CL, 0xB4			; Če tista celica vsebuje zaboj potem 
+    JNE color_p2_r_r		
+    INC D					; povečamo register D
+color_p2_r_r:
+	ADD B, 16				; Nadaljujemo na nasledno celico rdečega polja
+    JMP color_p2_loop
+color_position_end:
+	CMP D, 10				; Preverimo če vsi zaboji so na rdečemu polju
+    JNE end_color			; Če niso nadaljujemo na narej z igro
+    MOV B, [n]				; V globalno spremenljivko naložimo število stopnji ki smo jih koncali
+    INC B
+    MOV [n], B
+    CMP B, 2				; Če smo končali zadnjo stopnjo(drugo) potem 
+    JNE draw_level			; narišemo na zaslon sliko win
+    MOV A, imagewin
+    CALL draw_image   
+    JMP end_win
+    draw_level:				; Če smo končali prvo stopnjo nadaljujemo na nasledno stopnjo
+    MOV A, imagedva
+    CALL draw_image   
+    JMP end_color_other
+end_color:					;  Vrnenmo v registre originalne vrednosti
+	POP D
+    POP C
+    POP B
+    POP A
+	RET    
+end_color_other:			;  Vrnenmo v registre originalne vrednosti in
+	POP D
+    POP C
+    POP B
+    POP A
+    MOV C, 0x0F4A			; nastavimo igralca na novo celico
+    MOVB [C], 255
+	RET
+end_win:
+	RET
+
+
+
+  
+   
+org 0x0F00
+display_begin:				; Namesto pozicije lahko nalozimo labele.
+org 0x0FFF
+display_end:   
+
+    
